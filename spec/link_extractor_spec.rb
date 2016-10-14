@@ -29,7 +29,7 @@ describe 'Link extractor' do
     end
   end
 
-  describe 'get_domain_links' do
+  describe 'get_crawlable_domain_links' do
     it 'should give one link for domain' do
       # arrange
       html_path = File.expand_path('../web/one_link.html', __FILE__)
@@ -37,7 +37,7 @@ describe 'Link extractor' do
       link_extractor = LinkExtractor.new(html)
 
       # act
-      domain_links = link_extractor.get_domain_links('google.com')
+      domain_links = link_extractor.get_crawlable_domain_links('google.com', 'https')
 
       # assert
       expect(domain_links.count).to eq(1)
@@ -50,48 +50,60 @@ describe 'Link extractor' do
       link_extractor = LinkExtractor.new(html)
 
       # act
-      domain_links = link_extractor.get_domain_links('google.com')
+      domain_links = link_extractor.get_crawlable_domain_links('google.com', 'https')
 
       # assert
       expect(domain_links.count).to eq(2)
     end
   end
 
-  describe 'parse_link' do
+  describe 'build_crawlable_link' do
 
-    it 'should pass simple link correctly' do
-      link = LinkExtractor.parse_link('https://google.com', 'google.com', 'https')
+    it 'should build simple link correctly' do
+      link = LinkExtractor.build_crawlable_link('https://google.com', 'google.com', 'https')
+
+      expect(link.to_s).to eq('https://google.com')
+    end
+
+    it 'should build simple link without scheme correctly' do
+      link = LinkExtractor.build_crawlable_link('google.com', 'google.com', 'https')
 
       expect(link.to_s).to eq('https://google.com')
     end
 
     it 'should not overwrite domains with defined schema' do
-      link = LinkExtractor.parse_link('https://google.com', 'google.com', 'http')
+      link = LinkExtractor.build_crawlable_link('https://google.com', 'google.com', 'http')
 
       expect(link.to_s).to eq('https://google.com')
     end
 
     it 'should add schema to double slash urls' do
-      link = LinkExtractor.parse_link('//google.com', 'google.com', 'https')
+      link = LinkExtractor.build_crawlable_link('//google.com', 'google.com', 'https')
 
       expect(link.to_s).to eq('https://google.com')
     end
 
     it 'should parse relative link' do
-      link = LinkExtractor.parse_link('/news', 'google.com', 'https')
+      link = LinkExtractor.build_crawlable_link('/news', 'google.com', 'https')
 
       expect(link.to_s).to eq('https://google.com/news')
     end
 
     it 'should parse external link correctly' do
-      link = LinkExtractor.parse_link('//www.mediawiki.org/', 'google.com', 'http')
+      link = LinkExtractor.build_crawlable_link('//www.mediawiki.org/', 'google.com', 'http')
 
       expect(link.to_s).to eq('http://www.mediawiki.org/')
     end
 
     # because fragments are pointing to part of the page we should discard the fragment
+    it 'should remove empty fragment from parsed links' do
+      link = LinkExtractor.build_crawlable_link('#', 'google.com', 'https')
+
+      expect(link.to_s).to eq('https://google.com')
+    end
+
     it 'should remove fragment from parsed links' do
-      link = LinkExtractor.parse_link('#', 'google.com', 'https')
+      link = LinkExtractor.build_crawlable_link('#about', 'google.com', 'https')
 
       expect(link.to_s).to eq('https://google.com')
     end
