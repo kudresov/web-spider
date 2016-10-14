@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'neo4j'
 require './models/resource.rb'
+require 'nokogiri'
 
 neo4j_url = ENV['NEO4J_URL'] || 'http://localhost:7474'
 neo4j_username = ENV['NEO4J_USERNAME'] || 'neo4j'
