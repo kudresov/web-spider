@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'neo4j'
+require './models/resource.rb'
 
 neo4j_url = ENV['NEO4J_URL'] || 'http://localhost:7474'
 neo4j_username = ENV['NEO4J_USERNAME'] || 'neo4j'
@@ -13,5 +14,6 @@ get '/' do
 end
 
 post '/crawl' do
- params['url']
+  Resource.create uri: params['url']
+  'done'
 end
