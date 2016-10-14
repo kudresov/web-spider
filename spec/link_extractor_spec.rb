@@ -3,20 +3,30 @@ require File.expand_path '../../link_extractor.rb', __FILE__
 
 describe 'Link extractor' do
 
-  describe 'Get raw links' do
+  describe 'get_raw_links' do
 
-    it 'should give one link for site with one simple link' do
-      # arrange
-      one_link_html_path = File.expand_path('../web/one_link.html', __FILE__)
-      one_link_html = File.read(one_link_html_path)
-      link_extractor = LinkExtractor.new(one_link_html)
-      expected_link_count = 1
+    test_data = [
+        {page: 'one_link.html', expected_links_count: 1},
+        {page: 'three_links.html', expected_links_count: 3},
+        {page: 'malformed_body.html', expected_links_count: 1},
+        {page: 'relative_links.html', expected_links_count: 5},
+        {page: 'email_link.html', expected_links_count: 2}
+    ]
 
-      # act
-      raw_links = link_extractor.get_raw_links
+    test_data.each do |data|
+      it "should give #{data[:expected_links_count]} link/s for a #{data[:page]}" do
+        # arrange
+        html_path = File.expand_path('../web/' + data[:page], __FILE__)
+        html = File.read(html_path)
+        link_extractor = LinkExtractor.new(html)
 
-      # assert
-      expect(raw_links.count).to eq(expected_link_count)
+        # act
+        raw_links = link_extractor.get_raw_links
+
+        # assert
+        expect(raw_links.count).to eq(data[:expected_links_count])
+      end
     end
+
   end
 end
