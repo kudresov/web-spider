@@ -5,6 +5,7 @@ group :default do
   gem 'net-http-persistent', '2.9.4'
   gem 'neo4j', '~> 7.2'
   gem 'nokogiri'
+  gem 'addressable'
 end
 
 group :development, :test do
