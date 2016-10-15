@@ -6,6 +6,7 @@ group :default do
   gem 'neo4j', '~> 7.2'
   gem 'nokogiri'
   gem 'addressable'
+  gem 'public_suffix'
 end
 
 group :development, :test do
