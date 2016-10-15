@@ -43,9 +43,22 @@ describe 'Link extractor' do
       expect(domain_links.count).to eq(1)
     end
 
-    it 'should give one link for three links page' do
+    it 'should give 2 links for three links page' do
       # arrange
       html_path = File.expand_path('../web/three_links.html', __FILE__)
+      html = File.read(html_path)
+      link_extractor = LinkExtractor.new(html)
+
+      # act
+      domain_links = link_extractor.get_crawlable_domain_links('google.com', 'https')
+
+      # assert
+      expect(domain_links.count).to eq(2)
+    end
+
+    it 'should give right amount of links for a page with duplicates' do
+      # arrange
+      html_path = File.expand_path('../web/duplicate_links.html', __FILE__)
       html = File.read(html_path)
       link_extractor = LinkExtractor.new(html)
 

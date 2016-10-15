@@ -16,7 +16,7 @@ class LinkExtractor
 
   def get_crawlable_domain_links(host, scheme)
     uris = get_raw_links.map {|link| self.class.build_crawlable_link(link, host, scheme)}
-    uris.select {|uri| PublicSuffix.domain(uri.host) == host}
+    uris.select {|uri| PublicSuffix.domain(uri.host) == host}.uniq
   end
 
   def self.build_crawlable_link(url, host, scheme)
