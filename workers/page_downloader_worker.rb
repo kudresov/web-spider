@@ -14,6 +14,6 @@ end
 class PageDownloaderWorker
   include Sidekiq::Worker
   def perform(parent_uri, uri)
-
+    Resource.create uri: uri
   end
 end
