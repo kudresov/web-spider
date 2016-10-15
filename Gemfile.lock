@@ -11,6 +11,7 @@ GEM
     addressable (2.4.0)
     colored (1.2)
     concurrent-ruby (1.0.2)
+    connection_pool (2.2.0)
     diff-lcs (1.2.5)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
@@ -66,6 +67,7 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     rake (11.3.0)
+    redis (3.3.1)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
@@ -81,6 +83,11 @@ GEM
     rspec-support (3.5.0)
     ruby-progressbar (1.8.1)
     rubyzip (1.2.0)
+    sidekiq (4.2.2)
+      concurrent-ruby (~> 1.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (~> 1.5)
+      redis (~> 3.2, >= 3.2.1)
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -100,7 +107,9 @@ DEPENDENCIES
   nokogiri
   public_suffix
   rack-test
+  redis
   rspec
+  sidekiq
   sinatra
 
 BUNDLED WITH

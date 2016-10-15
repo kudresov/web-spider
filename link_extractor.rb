@@ -15,7 +15,7 @@ class LinkExtractor
   end
 
   def get_crawlable_domain_links(host, scheme)
-    uris = get_raw_links.map {|link| self.class.build_crawlable_link(link, host, scheme)}
+    uris = get_raw_links.compact.map {|link| self.class.build_crawlable_link(link, host, scheme)}
     uris.select {|uri| PublicSuffix.domain(uri.host) == host}.uniq
   end
 
@@ -30,6 +30,8 @@ class LinkExtractor
       # If the uri failed to parse it might it not complying with RFC standart
       # we will try to parse it one more time using heuristic
       Addressable::URI.heuristic_parse(url, {scheme: scheme})
+    rescue
+      nil
     end
   end
 end

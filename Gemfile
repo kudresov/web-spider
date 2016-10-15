@@ -7,6 +7,8 @@ group :default do
   gem 'nokogiri'
   gem 'addressable'
   gem 'public_suffix'
+  gem 'sidekiq'
+  gem 'redis'
 end
 
 group :development, :test do

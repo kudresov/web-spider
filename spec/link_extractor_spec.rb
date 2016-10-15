@@ -68,6 +68,19 @@ describe 'Link extractor' do
       # assert
       expect(domain_links.count).to eq(2)
     end
+
+    it 'should have correct number of links for wikipedia homepage' do
+      # arrange
+      html_path = File.expand_path('../web/wikipedia.html', __FILE__)
+      html = File.read(html_path)
+      link_extractor = LinkExtractor.new(html)
+
+      # act
+      domain_links = link_extractor.get_crawlable_domain_links('wikipedia.org', 'https')
+
+      # assert
+      expect(domain_links.count).to eq(223)
+    end
   end
 
   describe 'build_crawlable_link' do
