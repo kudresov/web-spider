@@ -49,4 +49,44 @@ describe 'Page Downloader' do
     end
   end
 
+  describe 'downloading 2 page site' do
+
+    before :all do
+      site_path = File.expand_path '../web/two_page_site', __FILE__
+      # start_local_server(site_path)
+    end
+
+    before :each do
+      uri = Addressable::URI.parse('http://localhost:8000')
+      PageDownloaderWorker.new.perform nil, uri
+    end
+
+    it 'should create 2 nodes in db' do
+      expect(Resource.all.count).to eq(2)
+    end
+  end
+
+  describe 'downloading 5 pages site' do
+
+    before :all do
+      site_path = File.expand_path '../web/simple_site', __FILE__
+      # start_local_server(site_path)
+    end
+
+    before :each do
+      uri = Addressable::URI.parse('http://localhost:8000')
+      PageDownloaderWorker.new.perform nil, uri
+    end
+
+    it 'should create 5 nodes in db' do
+      PageDownloaderWorker.drain
+      expect(Resource.all.count).to eq(5)
+    end
+
+    it 'should have a link from about to home page' do
+      PageDownloaderWorker.drain
+      page = Resource.find_by uri: 'http://localhost:8000/about.html'
+      expect(page.resources.count).to eq(2)
+    end
+  end
 end

@@ -43,6 +43,10 @@ describe 'Link extractor' do
       expect(domain_links.count).to eq(1)
     end
 
+    xit 'should extract links with no slash and base define correctly' do
+
+    end
+
     it 'should give 2 links for three links page' do
       # arrange
       html_path = File.expand_path('../web/three_links.html', __FILE__)
@@ -130,6 +134,18 @@ describe 'Link extractor' do
 
     it 'should remove fragment from parsed links' do
       link = LinkExtractor.build_crawlable_link('#about', 'google.com', 'https')
+
+      expect(link.to_s).to eq('https://google.com')
+    end
+
+    it 'should parse a no trailing slash link page' do
+      link = LinkExtractor.build_crawlable_link('about.html', 'google.com', 'https')
+
+      expect(link.to_s).to eq('https://google.com/about.html')
+    end
+
+    it 'should parse slash only as domain without trailing slash' do
+      link = LinkExtractor.build_crawlable_link('/', 'google.com', 'https')
 
       expect(link.to_s).to eq('https://google.com')
     end
