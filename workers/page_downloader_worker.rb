@@ -13,11 +13,11 @@ require File.expand_path '../../link_extractor.rb', __FILE__
 Neo4j::Session.open(:server_db, ENV['NEO4J_URL'])
 
 Sidekiq.configure_client do |config|
-  config.redis = { db: 1 }
+  config.redis = { db: 1, size: 1 }
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { db: 19 }
+  config.redis = { db: 1, size: 19 }
 end
 
 class PageDownloaderWorker
