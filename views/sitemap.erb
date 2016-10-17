@@ -1,0 +1,8 @@
+<h1>Resources for <%= @page.uri %></h1>
+<ul>
+  <% @page.resources.each do |resource| %>
+      <li>
+        <a href="<%= resource.uri %>"><%= resource.uri %></a>
+      </li>
+  <% end %>
+</ul>

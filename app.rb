@@ -6,7 +6,7 @@ require 'addressable/uri'
 
 require File.expand_path '../workers/page_downloader_worker.rb', __FILE__
 
-Neo4j::Session.open(:server_db, ENV['NEO4J_URL'])
+# Neo4j::Session.open(:server_db, ENV['NEO4J_URL'])
 
 get '/' do
   erb :index
@@ -17,3 +17,8 @@ post '/crawl' do
   PageDownloaderWorker.perform_async(nil, url)
 end
 
+get '/sitemap' do
+  url = params['url']
+  @page = Resource.find_by uri: url
+  erb :sitemap
+end
