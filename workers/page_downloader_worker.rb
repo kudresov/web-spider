@@ -10,18 +10,14 @@ require 'addressable/uri'
 require File.expand_path '../../models/resource.rb', __FILE__
 require File.expand_path '../../link_extractor.rb', __FILE__
 
-neo4j_url = ENV['NEO4J_URL'] || 'http://localhost:7474'
-neo4j_username = ENV['NEO4J_USERNAME'] || 'neo4j'
-neo4j_password = ENV['NEO4J_PASSWORD'] || 'admin'
-
-session = Neo4j::Session.open(:server_db, neo4j_url, basic_auth: {username: neo4j_username, password: neo4j_password})
+Neo4j::Session.open(:server_db, ENV['NEO4J_URL'])
 
 Sidekiq.configure_client do |config|
   config.redis = { db: 1 }
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { db: 1 }
+  config.redis = { db: 19 }
 end
 
 class PageDownloaderWorker
@@ -43,6 +39,7 @@ class PageDownloaderWorker
       children_urls = get_child_resources Addressable::URI.parse(uri)
       children_urls.each {|url| self.class.perform_async(uri, url)}
     rescue Neo4j::Server::CypherResponse::ConstraintViolationError => ex
+      puts ex
       page = Resource.find_by uri: uri
       parent.resources << page
     end
