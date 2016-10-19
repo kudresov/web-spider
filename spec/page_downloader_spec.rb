@@ -24,7 +24,7 @@ describe 'Page Downloader' do
     # Process.kill 'TERM', @web_server
   end
 
-  describe 'downloading single page app' do
+  describe 'downloading single page site' do
 
     before :all do
       site_path = File.expand_path '../web/single_page', __FILE__
@@ -34,10 +34,19 @@ describe 'Page Downloader' do
     before :each do
       uri = Addressable::URI.parse('http://localhost:8000')
       PageDownloaderWorker.new.perform nil, uri
+      PageDownloaderWorker.drain
     end
 
-    it 'should create 1 node in db' do
-      expect(Resource.all.count).to eq(1)
+    it 'should create 2 node in db' do
+      expect(Resource.all.count).to eq(2)
+    end
+
+    it 'should have 1 node if label image/jpeg' do
+      expect(Resource.all.where(content_type: 'image/jpeg').count).to eq(1)
+    end
+
+    it 'should have 1 node if label text/html' do
+      expect(Resource.all.where(content_type: 'text/html').count).to eq(1)
     end
 
     it 'should have a node with correct uri' do
@@ -59,6 +68,7 @@ describe 'Page Downloader' do
     before :each do
       uri = Addressable::URI.parse('http://localhost:8000')
       PageDownloaderWorker.new.perform nil, uri
+      PageDownloaderWorker.drain
     end
 
     it 'should create 2 nodes in db' do
@@ -76,15 +86,14 @@ describe 'Page Downloader' do
     before :each do
       uri = Addressable::URI.parse('http://localhost:8000')
       PageDownloaderWorker.new.perform nil, uri
+      PageDownloaderWorker.drain
     end
 
     it 'should create 5 nodes in db' do
-      PageDownloaderWorker.drain
       expect(Resource.all.count).to eq(5)
     end
 
     it 'should have a link from about to home page' do
-      PageDownloaderWorker.drain
       page = Resource.find_by uri: 'http://localhost:8000/about.html'
       expect(page.resources.count).to eq(2)
     end

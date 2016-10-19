@@ -1,8 +1,16 @@
-<h1>Resources for <%= @page.uri %></h1>
+<h1>Child nodes of <%= @page.uri %></h1>
 <ul>
-  <% @page.resources.each do |resource| %>
+  <% @page.rels(dir: :outgoing, type: 'LINKS_TO').each do |rel| %>
       <li>
-        <a href="<%= resource.uri %>"><%= resource.uri %></a>
+        <a href="<%= "/sitemap?url=#{rel.end_node.uri}" %>"><%= rel.end_node.uri %></a>
+      </li>
+  <% end %>
+</ul>
+<h2>Parent nodes of <%= @page.uri %></h2>
+<ul>
+  <% @page.rels(dir: :incoming, type: 'LINKS_TO').each do |rel| %>
+      <li>
+        <a href="<%= "/sitemap?url=#{rel.start_node.uri}" %>"><%= rel.start_node.uri %></a>
       </li>
   <% end %>
 </ul>

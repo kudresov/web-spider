@@ -5,18 +5,29 @@ require 'addressable/uri'
 
 class LinkExtractor
   LINKS_XPATH = '//html//a'
+  IMAGES_XPATH = '//html//img'
+  CSS_XPATH = '//link'
 
   def initialize(html)
-    @html = html
+    @doc = Nokogiri::HTML(html)
   end
 
+  # TODO dry up the 3 methods below
   def get_raw_links
-    doc = Nokogiri::HTML(@html)
-    doc.xpath(LINKS_XPATH).map { |link| link['href'] }
+    @doc.xpath(LINKS_XPATH).map { |link| link['href'] }
+  end
+
+  def get_image_links
+    @doc.xpath(IMAGES_XPATH).map { |img| img['src'] }
+  end
+
+  def get_css_links
+    @doc.xpath(CSS_XPATH).map { |css| css['href'] }
   end
 
   def get_crawlable_domain_links(host, scheme, port = nil)
-    uris = get_raw_links.compact.map {|link| self.class.build_crawlable_link(link, host, scheme, port)}
+    resources = get_image_links + get_raw_links + get_css_links
+    uris = resources.compact.map {|link| self.class.build_crawlable_link(link, host, scheme, port)}
     uris.select {|uri| PublicSuffix.domain(uri.host) == host || uri.host == 'localhost'}.uniq
   end
 
