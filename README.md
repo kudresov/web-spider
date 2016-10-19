@@ -36,6 +36,9 @@ To find out how many pages are 5 clicks away from home page is very easy to do i
 ### Sidekiq
 I use sidekiq as a backbone for the processing, it gives things like retry logic, parallelism, queue management as well as inbuilt interface to see state of all queues.
 
+# Running Demo
+Demo was deployed to `https://web-spider.herokuapp.com` feel free to use it rather than install all the deps locally. The only problem is the limitations of Redis and Neo4j on free tiers.
+
 # Running locally
 
 ## Prerequisites
