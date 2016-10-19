@@ -111,6 +111,19 @@ describe 'Link extractor' do
       # assert
       expect(domain_links.count).to eq(1)
     end
+
+    it 'should parse correctly medium complexity site' do
+      # arrange
+      html_path = File.expand_path('../web/services.html', __FILE__)
+      html = File.read(html_path)
+      link_extractor = LinkExtractor.new(html)
+
+      # act
+      domain_links = link_extractor.get_crawlable_domain_links('simplesamplesite.com', 'http')
+
+      # assert
+      expect(domain_links.count).to eq(37)
+    end
   end
 
   describe 'build_crawlable_link' do

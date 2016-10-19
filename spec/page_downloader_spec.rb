@@ -21,19 +21,18 @@ describe 'Page Downloader' do
   end
 
   after :each do
-    # Process.kill 'TERM', @web_server
+    Process.kill 'TERM', @web_server
   end
 
   describe 'downloading single page site' do
 
     before :all do
       site_path = File.expand_path '../web/single_page', __FILE__
-      # start_local_server(site_path)
+      start_local_server(site_path)
     end
 
     before :each do
-      uri = Addressable::URI.parse('http://localhost:8000')
-      PageDownloaderWorker.new.perform nil, uri
+      PageDownloaderWorker.new.perform nil, 'http://localhost:8000'
       PageDownloaderWorker.drain
     end
 
@@ -62,12 +61,11 @@ describe 'Page Downloader' do
 
     before :all do
       site_path = File.expand_path '../web/two_page_site', __FILE__
-      # start_local_server(site_path)
+      start_local_server(site_path)
     end
 
     before :each do
-      uri = Addressable::URI.parse('http://localhost:8000')
-      PageDownloaderWorker.new.perform nil, uri
+      PageDownloaderWorker.new.perform nil, 'http://localhost:8000'
       PageDownloaderWorker.drain
     end
 
@@ -80,12 +78,11 @@ describe 'Page Downloader' do
 
     before :all do
       site_path = File.expand_path '../web/simple_site', __FILE__
-      # start_local_server(site_path)
+      start_local_server(site_path)
     end
 
     before :each do
-      uri = Addressable::URI.parse('http://localhost:8000')
-      PageDownloaderWorker.new.perform nil, uri
+      PageDownloaderWorker.new.perform nil, 'http://localhost:8000'
       PageDownloaderWorker.drain
     end
 

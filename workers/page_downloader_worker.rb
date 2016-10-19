@@ -1,26 +1,13 @@
 require 'sidekiq'
-require 'redis'
-require 'sidekiq/api'
 require 'open-uri'
 require 'nokogiri'
-require 'neo4j'
-require 'neo4j-core'
 require 'addressable/uri'
 require 'net/http'
 
 require File.expand_path '../../models/resource.rb', __FILE__
 require File.expand_path '../../link_extractor.rb', __FILE__
-
-neo_url = ENV['NEO4J_URL'] || 'http://neo4j:admin@localhost:7474'
-Neo4j::Session.open(:server_db, neo_url)
-
-Sidekiq.configure_client do |config|
-  config.redis = { db: 1, size: 5}
-end
-
-Sidekiq.configure_server do |config|
-  config.redis = { db: 1, size: 12}
-end
+require File.expand_path '../../config/sidekiq.rb', __FILE__
+require File.expand_path '../../config/neo4j.rb', __FILE__
 
 class PageDownloaderWorker
   include Sidekiq::Worker
@@ -28,12 +15,12 @@ class PageDownloaderWorker
     fh = open(uri.to_s)
     html = fh.read
     link_extractor = LinkExtractor.new(html)
-    puts "getting children for #{uri}"
+    logger.info "getting children for #{uri}"
     link_extractor.get_crawlable_domain_links(uri.host, uri.scheme, uri.port)
   end
 
   def perform(parent_uri, uri)
-    puts "processing #{uri}"
+    logger.info "processing #{uri}"
     node = build_node(parent_uri, uri)
 
     if node && node.is_crawlable?
@@ -50,16 +37,18 @@ class PageDownloaderWorker
       parent.resources << resource if parent
       resource
     rescue Neo4j::Server::CypherResponse::ConstraintViolationError => ex
-      puts ex
+      logger.error ex
       page = Resource.find_by uri: node_uri, content_type: content_type
-      parent.resources << page
+      parent.resources << page if parent
       nil
     end
   end
 
+  # we use get content type rather than downloading the resource as image and html can be fairly large and the are no need to download
+  # it if it's an image, so we use HEAD request instead to what is the content type
   def get_content_type(uri)
-    parsed_uri  = Addressable::URI.parse(uri)
-    parsed_uri.path = '/' if parsed_uri.path == '/'
-    Net::HTTP.start(parsed_uri.host, parsed_uri.port){ |http| http.request_head(parsed_uri)['content-type'] }
+    # TODO double check that open, doesn't make a get request, otherwise use a lower level lib like Net::HTTP
+    req = open(uri)
+    req.content_type
   end
 end

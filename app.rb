@@ -6,8 +6,10 @@ require 'addressable/uri'
 require 'sidekiq/api'
 
 require File.expand_path '../workers/page_downloader_worker.rb', __FILE__
+require File.expand_path '../config/neo4j.rb', __FILE__
 
-# Neo4j::Session.open(:server_db, ENV['NEO4J_URL'])
+# require 'sidekiq/testing'
+# Sidekiq::Testing.inline!
 
 get '/' do
   erb :index
