@@ -15,11 +15,11 @@ neo_url = ENV['NEO4J_URL'] || 'http://neo4j:admin@localhost:7474'
 Neo4j::Session.open(:server_db, neo_url)
 
 Sidekiq.configure_client do |config|
-  config.redis = { db: 1, size: 5, url: ENV['REDIS_URL']}
+  config.redis = { db: 1, size: 5}
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { db: 1, size: 12, url: ENV['REDIS_URL']}
+  config.redis = { db: 1, size: 27}
 end
 
 class PageDownloaderWorker
