@@ -19,7 +19,7 @@ Sidekiq.configure_client do |config|
 end
 
 Sidekiq.configure_server do |config|
-  config.redis = { db: 1, size: 27}
+  config.redis = { db: 1, size: 12}
 end
 
 class PageDownloaderWorker
